@@ -9,14 +9,18 @@ env:
     value: maction-cs
   - variable: CRM_ALLOWED_EMAILS
     value: marketing.maction@gmail.com
-    availability: [RUNTIME]
+    availability: [ RUNTIME ]
   - variable: FIREBASE_AUTH_DOMAIN
     value: maction-cs.firebaseapp.com
 
   - variable: FIREBASE_WEB_API_KEY
     value: AIzaSyDmv9JwuKI2PRWWt-UcA3THBNuy5vIvW-c
-    availability: [RUNTIME]
+    availability: [ RUNTIME ]
 
   - variable: CRM_ORIGIN
     value: https://maction-cs--maction-cs.asia-east1.hosted.app
-    availability: [RUNTIME]
+    availability: [ RUNTIME ]
+  - variable: META_APP_SECRET
+    secret: META_APP_SECRET
+  - variable: META_VERIFY_TOKEN
+    secret: META_VERIFY_TOKEN
