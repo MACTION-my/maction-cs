@@ -1,2 +1,2 @@
 export function allowedEmail(email:string|undefined,verified:boolean,owners:string){return !!email&&verified&&owners.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean).includes(email.toLowerCase());}
-export function sameOrigin(request:Request){const origin=request.headers.get('origin');if(!origin)return false;try{return origin===new URL(request.url).origin||!!process.env.CRM_ORIGIN&&origin===new URL(process.env.CRM_ORIGIN).origin;}catch{return false;}}
+export function sameOrigin(request:Request){const origin=request.headers.get('origin');if(!origin)return false;try{return origin===new URL(request.url).origin||(process.env.CRM_ORIGIN||'').split(',').filter(Boolean).some(v=>origin===new URL(v.trim()).origin);}catch{return false;}}

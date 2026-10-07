@@ -18,7 +18,7 @@ env:
     availability: [ RUNTIME ]
 
   - variable: CRM_ORIGIN
-    value: https://cs.mustaction.my
+    value: https://cs.mustaction.my,https://maction-cs--maction-cs.asia-east1.hosted.app
     availability: [ RUNTIME ]
   - variable: META_APP_SECRET
     secret: META_APP_SECRET

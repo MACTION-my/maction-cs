@@ -9,7 +9,7 @@ async function graph(id:string,fields:string,token:string,version:string){
   const url=new URL(`https://graph.facebook.com/${version}/${id}`);url.searchParams.set('fields',fields);
   const r=await fetch(url,{headers:{Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(10000)});
   const p=await r.json() as any;
-  if(!r.ok||p.error)throw new Error(`Meta 读取失败（${r.status}）；检查 Page 权限、Token 或稍后重试`);
+  if(!r.ok||p.error)throw new Error(`Meta 读取失败（HTTP ${r.status} / Code ${p.error?.code||'未知'}）；检查对应 Page 或广告账户权限、Token 后重试`);
   return p;
 }
 const mark=markMeta;
@@ -24,7 +24,7 @@ export async function processMeta(e:MetaEvent){
     if(String(p.id)!==e.leadId||!Array.isArray(p.field_data))throw new Error('Meta Lead 返回资料不完整');
     const adId=String(p.ad_id||e.adId||'');const formId=String(p.form_id||e.formId||'');
     let account='',campaign='';
-    if(adId){const ad=await graph(adId,'id,account_id,campaign_id',token,version);account=String(ad.account_id||'').replace(/^act_/,'');campaign=String(ad.campaign_id||'');}
+    if(adId){const ad=await graph(adId,'id,account_id,campaign_id',process.env.META_ADS_TOKEN||token,version);account=String(ad.account_id||'').replace(/^act_/,'');campaign=String(ad.campaign_id||'');}
     const contact=metaContact(p.field_data);
     if(contact.phone&&!/^\+?\d{8,15}$/.test(contact.phone))throw new Error('Meta 电话格式异常，请检查表单');
     for(let attempt=0;attempt<3;attempt++){
