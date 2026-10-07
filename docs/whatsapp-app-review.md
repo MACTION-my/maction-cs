@@ -1,6 +1,6 @@
 # MACTION CS WhatsApp App Review
 
-Status: implementation in test mode; not approved for existing WhatsApp Business App onboarding. Error 2655111 requires Advanced Access. No production sender connected and no customer automation enabled.
+Status: test implementation deployed and verified on 7 October 2026. A hello_world message sent from the CRM to the verified recipient returned a delivered webhook. A fictional Chinese MARKETING template (maction_review_welcome_oct2026) was created through the CRM and returned PENDING. The WhatsApp messages webhook and test WABA subscription are configured. Existing mobile WhatsApp Business App onboarding is not approved: error 2655111 requires Advanced Access. No customer automation enabled; the mobile sender is not connected.
 
 ## Requested permissions
 
@@ -25,7 +25,7 @@ Screenshots are not videos. Do not fabricate message receipts, approval status o
 
 ## Remaining production work
 
-- Complete WhatsApp messages webhook configuration and verify actual inbound/status delivery.
+- Verify an actual inbound reply; delivery status callbacks have passed.
 - Replace short-lived test token with an appropriately authorised production credential after approval. Secrets stay in Secret Manager.
 - Complete App Review and Access Verification as required by Meta's onboarding flow.
 - Connect the selected mobile WhatsApp Business number through v4 Business App Onboarding (Coexistence); preserve mobile replies. Eligibility is determined by Meta.
