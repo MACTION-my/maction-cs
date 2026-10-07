@@ -25,7 +25,7 @@ Screenshots are not videos. Do not fabricate message receipts, approval status o
 
 ## Remaining production work
 
-- Verify an actual inbound reply; delivery status callbacks have passed.
+- Inbound reply verification passed: the user replied "测试" from the verified recipient, shown in the CRM at 19:20 MYT; the outbound status also advanced to read. Preserve an actual video of this behaviour for review.
 - Replace short-lived test token with an appropriately authorised production credential after approval. Secrets stay in Secret Manager.
 - Complete App Review and Access Verification as required by Meta's onboarding flow.
 - Connect the selected mobile WhatsApp Business number through v4 Business App Onboarding (Coexistence); preserve mobile replies. Eligibility is determined by Meta.
