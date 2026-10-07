@@ -24,10 +24,16 @@ Callback: 当前 Firebase 网站的 `/api/integrations/meta`。GET 验证 Verify
 
 Firestore `maction_crm/workspace` 保存带版本号的 CRM JSON，事务防止覆盖并发更新；900KB 应用容量保护。`maction_meta_inbox` 保存通知处理状态。公开客户端规则禁止读写这些集合，只能走认证的服务器 API。
 
-初始工作区为空；示例数据只在主动加载时生成。原 Sites 工作区数据不会自动复制。广告消费仍手动记录；WhatsApp／OpenAI 尚未授权，不会自动发送。
+初始工作区为空；示例数据只在主动加载时生成。原 Sites 工作区数据不会自动复制。广告报告已接入 Meta Insights；手动消费记录独立保留。WhatsApp／OpenAI 尚未授权，不会自动发送。
 
 ## 本地检查
 
 `npm ci` · `npm run typecheck` · `npm test` · `npm run build`
 
 本地运行数据操作需要自己的 Firebase Admin ADC 或 Firestore Emulator；不要在生产启用模拟登录，也不要相信客户端传来的身份 Headers。
+
+## Meta Ads Report
+
+META_ADS_TOKEN 通过 Secret Manager 保存具有 ads_read 的用户 Token，META_AD_ACCOUNTS 为账户清单。到期或撤销后需要重新授权。服务器读取 Campaign 每日 Insights，存入 maction_ads 账户／日期文档；重复同步覆盖同一天，不重复累计。客户端禁止直接读取。
+
+广告成效页支持账户／日期筛选、CSV、花费、展示、点击、原生表单 Lead 和 CPL，每次最多 31 天，币种分别汇总。Lead 只计 onsite_conversion.lead_grouped，避免重复累计。打开页面时缓存超过 15 分钟或日期不完整会同步，另有手动同步按钮；未配置无人值守定时任务。Meta 归因提交数可能与 CRM 去重客户数不同。

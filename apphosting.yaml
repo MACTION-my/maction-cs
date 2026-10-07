@@ -29,3 +29,9 @@ env:
     availability: [ RUNTIME ]
   - variable: META_PAGE_TOKENS
     secret: META_PAGE_TOKENS
+  - variable: META_ADS_TOKEN
+    secret: META_ADS_TOKEN
+
+  - variable: META_AD_ACCOUNTS
+    value: "[{\"id\":\"256891278\",\"name\":\"Jacky Lim\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"1670543204163828\",\"name\":\"Maction Page\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"481966563309622\",\"name\":\"Jacky Page\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"318742060145289\",\"name\":\"Maction x Coff Guys\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"637010841817597\",\"name\":\"Recruit Maction\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"837976407618020\",\"name\":\"M9品誉\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"2070031456723180\",\"name\":\"PINYU品誉\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"479965071344127\",\"name\":\"M9门市\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"1806183496573882\",\"name\":\"M9 Shukri\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1},{\"id\":\"3967944443497832\",\"name\":\"Pinyu Malaysia [Adrian & Amanda] - May 26\",\"currency\":\"MYR\",\"timeZone\":\"Asia/Kuala_Lumpur\",\"status\":1}]"
+    availability: [RUNTIME]

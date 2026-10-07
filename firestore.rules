@@ -4,5 +4,6 @@ service cloud.firestore {
     // CRM is accessed through server APIs after verified Firebase session auth.
     match /maction_crm/{document=**} { allow read, write: if false; }
     match /maction_meta_inbox/{document=**} { allow read, write: if false; }
+    match /maction_ads/{document=**} { allow read, write: if false; }
   }
 }

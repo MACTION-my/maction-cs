@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+import {readFile} from 'node:fs/promises';
+const source=await readFile(new URL('../lib/ads-protocol.ts',import.meta.url),'utf8');
+const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {adsRange,adsDates,normalizeAds}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const account={id:'123',name:'Test',currency:'MYR',timeZone:'Asia/Kuala_Lumpur'};
+test('report refuses invalid and oversized intervals',()=>{assert.throws(()=>adsRange('2026-02-30','2026-03-01'));assert.throws(()=>adsRange('2026-01-01','2026-02-01'));assert.throws(()=>adsRange('2026-10-07','2026-10-01'));assert.equal(adsDates('2026-10-01','2026-10-07').length,7);});
+test('native form leads do not double count generic or website lead actions',()=>{const row={date_start:'2026-10-07',date_stop:'2026-10-07',account_id:'123',account_currency:'MYR',campaign_id:'456',spend:'12.34',impressions:'100',clicks:'4',actions:[{action_type:'lead',value:'9'},{action_type:'offsite_conversion.fb_pixel_lead',value:'6'},{action_type:'onsite_conversion.lead_grouped',value:'3'}]};const actual=normalizeAds(row,account);assert.equal(actual.leads,3);assert.equal(actual.spend,12.34);assert.equal(normalizeAds({...row,actions:[]},account).leads,0);assert.throws(()=>normalizeAds({...row,account_currency:'USD'},account));assert.throws(()=>normalizeAds({...row,account_id:'999'},account));assert.throws(()=>normalizeAds({...row,spend:'NaN'},account));});
