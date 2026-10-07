@@ -1,0 +1,1 @@
+export function GET(){if(!process.env.FIREBASE_WEB_API_KEY)return Response.json({error:'管理员尚未完成登录配置'},{status:503});return Response.json({apiKey:process.env.FIREBASE_WEB_API_KEY,authDomain:process.env.FIREBASE_AUTH_DOMAIN||'maction-cs.firebaseapp.com',projectId:'maction-cs'});}

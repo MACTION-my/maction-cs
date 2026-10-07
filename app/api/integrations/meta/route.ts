@@ -1,0 +1,5 @@
+import {enqueueMeta,metaConfig,processMeta} from '@/lib/meta-intake';
+import {metaEvents,validMetaSignature} from '@/lib/meta-protocol';
+export const dynamic='force-dynamic';
+export async function GET(request:Request){const u=new URL(request.url),token=process.env.META_VERIFY_TOKEN;if(!token)return new Response('Meta not configured',{status:503});if(u.searchParams.get('hub.mode')==='subscribe'&&u.searchParams.get('hub.verify_token')===token)return new Response(u.searchParams.get('hub.challenge')||'');return new Response('Forbidden',{status:403});}
+export async function POST(request:Request){const c=metaConfig();if(!c.secret)return new Response('Meta not configured',{status:503});const raw=await request.text();if(raw.length>262144)return new Response('Too large',{status:413});if(!await validMetaSignature(raw,request.headers.get('x-hub-signature-256'),c.secret))return new Response('Forbidden',{status:403});try{const events=metaEvents(JSON.parse(raw));await enqueueMeta(events);for(const e of events.slice(0,2))await processMeta(e);return Response.json({received:events.length});}catch{return new Response('Please retry',{status:503});}}

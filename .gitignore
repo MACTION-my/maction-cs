@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env*
+!.env.example
+.firebase/
+.npm-cache/
+*.tsbuildinfo
+*-debug.log
+*.pem
+*service-account*.json

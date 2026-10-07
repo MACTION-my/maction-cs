@@ -1,0 +1,14 @@
+'use client';
+import {useEffect,useState} from 'react';
+import {Button} from '@/components/ui/button';
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
+import {RefreshCw,Workflow} from 'lucide-react';
+export default function MetaConnection(){
+  const [info,setInfo]=useState<any>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+  async function refresh(){setError('');try{const r=await fetch('/api/integrations/meta/status');if(!r.ok)throw new Error('无法读取 Meta 接收状态');setInfo(await r.json());}catch(e){setError((e as Error).message);}}
+  useEffect(()=>{refresh();},[]);
+  async function retry(){setBusy(true);try{const r=await fetch('/api/integrations/meta/status',{method:'POST'});if(!r.ok)throw new Error('重试失败，请稍后再试');await refresh();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+  return <><div className="routing-flow">{['Meta Lead Ads','验证并读取 Lead','按 Page / Form 识别课程','下一场 Preview','分配负责人'].map((x,i)=><div key={x}><span>{String(i+1).padStart(2,'0')}</span><strong>{x}</strong></div>)}</div>
+    <section className="panel padded"><div className="panel-toolbar"><h2><Workflow size={20}/> Meta 直接接入</h2><span className="badge outline">{info?.configured?'服务器授权已配置 · 待实测验收':'待 Meta 授权与 Page 订阅'}</span></div><p>Meta 表单提交后直接进入本系统。来源按广告账号、Page ID、Form ID 匹配课程，再分配场次和负责人。</p><div className="connection-note">启用前需完成 Meta App、各 Page 的 Lead 读取权限与 leadgen 订阅。Meta Callback 使用本站 /api/integrations/meta；客户后台受 Firebase 登录保护，Webhook 只接收通过签名验证的 Meta 通知。</div><p className="footnote">在「自动分配」建立来源规则。未匹配课程或读取失败的 Lead 会保留在接收记录中，处理后可以重试。广告消费同步需另行授权；WhatsApp 不会因接收到 Lead 自动发送。</p><p className="muted">已配置 Page：{info?.pages?.join('、')||'暂无'}</p></section>
+    <section className="panel"><div className="panel-toolbar"><h2>Meta 接收记录</h2><div><Button variant="ghost" onClick={refresh}><RefreshCw size={16}/>刷新</Button><Button disabled={busy||!info?.events?.some((e:any)=>e.status==='pending')} onClick={retry}>{busy?'处理中…':'重试待处理 Lead'}</Button></div></div>{error&&<p className="warning padded" role="alert">{error}</p>}<Table><TableHeader><TableRow><TableHead>Lead ID</TableHead><TableHead>接收时间（MYT）</TableHead><TableHead>状态</TableHead><TableHead>说明</TableHead><TableHead>处理次数</TableHead></TableRow></TableHeader><TableBody>{info?.events?.map((e:any)=><TableRow key={e.lead_id}><TableCell>{e.lead_id}</TableCell><TableCell>{new Date(e.received_at).toLocaleString('zh-CN',{timeZone:'Asia/Kuala_Lumpur'})}</TableCell><TableCell>{e.status==='imported'?'已进入系统':'待处理'}</TableCell><TableCell>{e.message||'等待读取资料'}</TableCell><TableCell>{e.attempts}</TableCell></TableRow>)}</TableBody></Table>{!info?.events?.length&&<div className="empty">尚未收到 Meta Lead 通知。完成连接后，用 Meta 测试 Lead 验证整个流程。</div>}<p className="footnote">显示最近 50 条通知；每次手动重试最多处理 5 条。相同 Meta Lead ID 重复通知不会重复创建客户。</p></section></>;
+}

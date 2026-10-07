@@ -1,0 +1,1 @@
+{"firestore":{"rules":"firestore.rules"},"apphosting":[{"backendId":"maction-cs","rootDir":".","ignore":["node_modules",".git",".next",".npm-cache","firebase-debug.log","firebase-debug.*.log",".env*","tests"]}]}
