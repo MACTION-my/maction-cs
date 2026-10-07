@@ -146,3 +146,5 @@ body{font-family:Inter,'Segoe UI','Microsoft YaHei',sans-serif;font-size:16px;co
 
 
 .board-help{padding:12px 22px;font-size:13px;color:#6b8595}.kanban-column{min-height:300px;transition:background .15s,box-shadow .15s}.kanban-column.drop-target{background:#fff0f0;box-shadow:inset 0 0 0 2px #c62828}.lead-card{cursor:grab}.lead-card.dragging{opacity:.45}.card-open{display:block;width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer}.card-stage{display:flex;align-items:center;gap:8px;margin-top:12px;border-top:1px solid #edf0f3;padding-top:9px;font-size:12px;color:#6b8595}.card-stage select{width:100%;min-width:0;background:white;border:1px solid #dfe6ec;border-radius:5px;padding:5px;color:#18303d}.card-stage span{white-space:nowrap}.card-open small{display:block;margin-top:6px}.kanban-column h3{position:sticky;top:0;background:inherit;z-index:1}
+
+.form-submission{margin-top:18px;border:1px solid #dfe6ec;border-radius:8px;padding:14px}.form-submission>small{display:block;color:#738594;margin-top:7px}.lead-sheet [data-slot=tabs-list]{flex-wrap:wrap;height:auto}.form-submission .source-list dt{overflow-wrap:anywhere}

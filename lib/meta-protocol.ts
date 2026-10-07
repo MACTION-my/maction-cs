@@ -21,3 +21,5 @@ export function metaContact(fields:{name:string;values:string[]}[]){
   const get=(key:string)=>String(fields.find(f=>f.name===key)?.values?.[0]||'').trim();
   return {name:get('full_name')||[get('first_name'),get('last_name')].filter(Boolean).join(' ')||'Meta 客户',phone:get('phone_number').replace(/[\s()-]/g,''),company:get('company_name')};
 }
+
+export function metaAnswers(fields:any[],questions:any[]=[]){return fields.map(f=>{if(typeof f?.name!=='string'||!Array.isArray(f.values))throw new Error('Meta 表单回答格式无效');const q=questions.find(q=>q.key===f.name);return{name:f.name,label:typeof q?.label==='string'&&q.label?q.label:f.name,values:f.values.map((v:unknown)=>String(v))};});}
