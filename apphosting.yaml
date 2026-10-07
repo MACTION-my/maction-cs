@@ -10,6 +10,9 @@ env:
   - variable: CRM_ALLOWED_EMAILS
     value: marketing.maction@gmail.com,marketing@maction.com.my
     availability: [ RUNTIME ]
+  - variable: CRM_ADMIN_UIDS
+    value: '{"marketing@maction.com.my":"zuOY5Ds4mpacERV46I6ouaasndO2"}'
+    availability: [ RUNTIME ]
   - variable: FIREBASE_AUTH_DOMAIN
     value: maction-cs.firebaseapp.com
 

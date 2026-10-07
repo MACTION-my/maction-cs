@@ -9,7 +9,7 @@ Status: test implementation deployed and verified on 7 October 2026. A hello_wor
 
 ## Reviewer walkthrough
 
-1. Use a separately authorised email-and-password reviewer login supplied through the private App Review instructions. Firebase Authentication validates the credentials; verified email and workspace authorisation are both required. The workspace is not publicly accessible. Do not publish administrator passwords, tokens or session cookies. Reviewer access is not yet provisioned.
+1. Use a separately authorised email-and-password reviewer login supplied through the private App Review instructions. Firebase Authentication validates the credentials; explicit workspace authorisation and a matching administrator-approved Firebase user identity are required. The workspace is not publicly accessible. Do not publish administrator passwords, tokens or session cookies. Reviewer access is not yet provisioned.
 2. Open WhatsApp & AI in the left navigation.
 3. The top panel identifies the Meta test sender and the single verified test recipient. Refresh loads template approval statuses and message history.
 4. Select hello_world / en_US and send one message to the verified test recipient. Show the phone receiving the message and the workspace request record. "Meta accepted" is distinct from delivered/read and requires a subscribed messages webhook for the latter.
