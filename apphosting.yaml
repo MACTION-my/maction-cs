@@ -24,3 +24,8 @@ env:
     secret: META_APP_SECRET
   - variable: META_VERIFY_TOKEN
     secret: META_VERIFY_TOKEN
+  - variable: META_GRAPH_VERSION
+    value: v26.0
+    availability: [ RUNTIME ]
+  - variable: META_PAGE_TOKENS
+    secret: META_PAGE_TOKENS
