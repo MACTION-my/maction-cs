@@ -1,0 +1,9 @@
+import {type CRM,type Member,initialState} from './crm';
+export type Access={role:'admin'|'team';memberId:string|null;courseIds:string[];leadScope:'project'|'own'};
+export function resolveAccess(email:string|undefined,verified:boolean,admins:string,s:CRM):Access|null{
+ if(!email||!verified)return null;const normalized=email.toLowerCase();if(admins.split(',').some(v=>v.trim().toLowerCase()===normalized))return{role:'admin',memberId:null,courseIds:s.courses.map(c=>c.id),leadScope:'project'};
+ const matches=s.members.filter(m=>m.active&&m.loginEnabled&&m.email?.toLowerCase()===normalized);if(matches.length!==1)return null;const m=matches[0];return{role:'team',memberId:m.id,courseIds:(m.courseIds||[]).filter(id=>s.courses.some(c=>c.id===id)),leadScope:m.leadScope==='own'?'own':'project'};
+}
+export function canLead(s:CRM,a:Access,id:string){const l=s.leads.find(l=>l.id===id);return !!l&&(a.role==='admin'||a.courseIds.includes(l.courseId)&&(a.leadScope==='project'||l.ownerId===a.memberId));}
+export function visibleState(s:CRM,a:Access):CRM{if(a.role==='admin')return s;const ids=new Set(a.courseIds),base=initialState();return{...base,courses:s.courses.filter(c=>ids.has(c.id)).map(c=>({...c,aiInstructions:''})),sessions:s.sessions.filter(e=>ids.has(e.courseId)),leads:s.leads.filter(l=>canLead(s,a,l.id)),members:s.members.filter(m=>m.id===a.memberId||s.courses.some(c=>ids.has(c.id)&&c.teamIds.includes(m.id))||s.leads.some(l=>canLead(s,a,l.id)&&l.ownerId===m.id)).map(({id,name,role,active})=>({id,name,role,active})),settings:{...base.settings,greeting:s.settings.greeting}};}
+export function allowAction(s:CRM,a:Access,action:string,p:any){if(a.role==='admin')return true;if(action==='lead')return a.courseIds.includes(p.courseId);if(['note','stage','transfer','followUp','aiPause','revenue'].includes(action))return canLead(s,a,p.id);return false;}

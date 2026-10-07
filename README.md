@@ -37,3 +37,7 @@ Firestore `maction_crm/workspace` 保存带版本号的 CRM JSON，事务防止�
 META_ADS_TOKEN 通过 Secret Manager 保存具有 ads_read 的用户 Token，META_AD_ACCOUNTS 为账户清单。到期或撤销后需要重新授权。服务器读取 Campaign 每日 Insights，存入 maction_ads 账户／日期文档；重复同步覆盖同一天，不重复累计。客户端禁止直接读取。
 
 广告成效页支持账户／日期筛选、CSV、花费、展示、点击、原生表单 Lead 和 CPL，每次最多 31 天，币种分别汇总。Lead 只计 onsite_conversion.lead_grouped，避免重复累计。打开页面时缓存超过 15 分钟或日期不完整会同步，另有手动同步按钮；未配置无人值守定时任务。Meta 归因提交数可能与 CRM 去重客户数不同。
+
+## 团队权限
+
+总管理员由 CRM_ALLOWED_EMAILS 指定。总管理员在团队人员中填写已验证 Google 邮箱、开启登录、勾选授权课程／项目。负责人分配名单和登录授权分别维护，避免仅因被分配为负责人而自动获得访问权。每次 API 请求均重新读取有效权限，停用成员、关闭登录或移除课程权限对后续请求立即生效。团队 CRM 响应只包含授权课程的场次与客户，管理成员、课程、规则、广告账户及 Meta 接收记录仅管理员开放。所有 Firestore 客户端访问默认拒绝，必须通过认证的服务器 API。Google 账号 MFA 由各自账号的安全设置开启。
