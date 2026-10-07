@@ -1,0 +1,9 @@
+import {getUser} from '@/app/firebase-auth';
+import {sameOrigin} from '@/lib/auth-policy';
+import {waCreateTemplate,waOverview,waSend,waGraph,waConfig} from '@/lib/whatsapp';
+import {database} from '@/lib/firebase-admin';
+import {readState} from '@/lib/store';
+import {waTemplate,waLanguage,waHttps} from '@/lib/whatsapp-protocol';
+export const dynamic='force-dynamic';
+export async function GET(){const user=await getUser();if(!user)return new Response('Unauthorized',{status:401});if(user.access.role!=='admin')return new Response('Forbidden',{status:403});try{return Response.json(await waOverview());}catch{return Response.json({error:'WhatsApp 记录暂时无法读取，请稍后重试'},{status:503});}}
+export async function POST(request:Request){const user=await getUser();if(!user)return new Response('Unauthorized',{status:401});if(user.access.role!=='admin'||!sameOrigin(request))return new Response('Forbidden',{status:403});try{const raw=await request.text();if(raw.length>32000)return new Response('Too large',{status:413});const b=JSON.parse(raw);if(b.action==='send')return Response.json(await waSend(b,user.email!));if(b.action==='template')return Response.json(await waCreateTemplate(b,user.email!));if(b.action==='subscribe'){const result=await waGraph(`${waConfig().wabaId}/subscribed_apps`,'POST',{});return Response.json(result);}if(b.action==='route'){const {state}=await readState();if(!state.courses.some(c=>c.id===b.courseId))throw new Error('课程不存在');const route={sender:'test',template:waTemplate(b.template),language:waLanguage(b.language),image:b.image?waHttps(b.image):'',enabled:false,updatedAt:new Date().toISOString(),actor:user.email};await database().collection('maction_whatsapp_routes').doc(b.courseId).set(route);return Response.json({ok:true});}throw new Error('无效操作');}catch(e){return Response.json({error:(e as Error).message},{status:400});}}

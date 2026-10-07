@@ -27,6 +27,24 @@ env:
   - variable: META_GRAPH_VERSION
     value: v26.0
     availability: [ RUNTIME ]
+  - variable: META_APP_ID
+    value: "1641656300696263"
+    availability: [ RUNTIME ]
+  - variable: WHATSAPP_TEST_TOKEN
+    secret: WHATSAPP_TEST_TOKEN
+    availability: [ RUNTIME ]
+  - variable: WHATSAPP_PHONE_ID
+    value: "1398106806717315"
+    availability: [ RUNTIME ]
+  - variable: WHATSAPP_WABA_ID
+    value: "1653654459544940"
+    availability: [ RUNTIME ]
+  - variable: WHATSAPP_SENDER
+    value: "+1 555-645-3277"
+    availability: [ RUNTIME ]
+  - variable: WHATSAPP_TEST_RECIPIENT
+    value: "60127194133"
+    availability: [ RUNTIME ]
   - variable: META_PAGE_TOKENS
     secret: META_PAGE_TOKENS
   - variable: META_ADS_TOKEN
