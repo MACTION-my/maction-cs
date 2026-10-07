@@ -8,7 +8,7 @@ env:
   - variable: GOOGLE_CLOUD_PROJECT
     value: maction-cs
   - variable: CRM_ALLOWED_EMAILS
-    value: marketing.maction@gmail.com
+    value: marketing.maction@gmail.com,marketing@maction.com.my
     availability: [ RUNTIME ]
   - variable: FIREBASE_AUTH_DOMAIN
     value: maction-cs.firebaseapp.com
