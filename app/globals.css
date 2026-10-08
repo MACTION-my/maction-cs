@@ -154,3 +154,6 @@ body{font-family:Inter,'Segoe UI','Microsoft YaHei',sans-serif;font-size:16px;co
 .metric span,.metric small,.page-head p,.quick-tabs button,.filter-secondary,.board-help,.field,.field>span,.muted,.footnote,.course-card p,.course-meta,.session-info p,.session-stats small,.lead-card p,.lead-card small,.card-stage,[data-slot=table-head],[data-slot=table-cell] small,.timeline-meta time,.source-list dt{color:#000;font-weight:600}
 .workspace input::placeholder,.edit-form input::placeholder,.edit-form textarea::placeholder{color:#222;opacity:1}
 .workspace [data-slot=select-trigger],.workspace .pick,.workspace [data-slot=tabs-trigger],.detail-body [data-slot=tabs-trigger]{font-weight:600}
+
+[data-slot=sidebar-inset]{min-width:0}.workspace{min-width:0}.topbar{min-width:0}.search{min-width:min(220px,100%)}
+@media(max-width:700px){.topbar{gap:8px}.crumb{gap:6px;min-width:0}.crumb>strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top-right{gap:4px;flex-shrink:0}.filters .pick{min-width:0}.page-head{flex-wrap:wrap}}

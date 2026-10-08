@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useState} from 'react';
+import {useEffect,useState,useRef} from 'react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
@@ -8,10 +8,19 @@ const day=(offset=0)=>new Date(Date.now()+offset*86400000).toLocaleDateString('e
 const amount=(n:number,currency:string)=>new Intl.NumberFormat('en-MY',{style:'currency',currency}).format(n);
 export default function AdsReport(){
  const [since,setSince]=useState(()=>day(-6)),[until,setUntil]=useState(()=>day()),[account,setAccount]=useState(''),[info,setInfo]=useState<any>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
- const params=new URLSearchParams({since,until,account}).toString();
- async function load(){const r=await fetch('/api/integrations/meta/ads?'+params);const p=await r.json();if(!r.ok)throw Error(p.error||'读取广告报告失败');setInfo(p);return p;}
- async function sync(){setBusy(true);setError('');try{const r=await fetch('/api/integrations/meta/ads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({since,until,account})});const p=await r.json();if(!r.ok)throw Error(p.error||'同步失败');const failures=p.results.filter((x:any)=>x.error);if(failures.length)setError(failures.map((x:any)=>`${x.name}：${x.error}`).join('；'));await load();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- useEffect(()=>{let active=true;setBusy(true);setError('');load().then(p=>{if(!active)return;const selected=p.accounts.filter((a:any)=>!account||a.id===account);if(p.configured&&selected.some((a:any)=>!a.lastSyncedAt||Date.now()-Date.parse(a.lastSyncedAt)>15*60000||!a.since||a.since>since||a.until<until))return sync();}).catch(e=>{if(active)setError(e.message);}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[since,until,account]);
+ const activeRequest=useRef<AbortController|null>(null);
+ async function refresh(syncIfStale:boolean,force=false){
+  activeRequest.current?.abort();const controller=new AbortController();activeRequest.current=controller;setBusy(true);setError('');
+  const current=()=>activeRequest.current===controller&&!controller.signal.aborted;
+  const query=new URLSearchParams({since,until,account}).toString();
+  async function load(){const r=await fetch('/api/integrations/meta/ads?'+query,{signal:controller.signal});const p=await r.json();if(!r.ok)throw Error(p.error||'读取广告报告失败');return p;}
+  try{let p=await load();if(!current())return;setInfo(p);const selected=p.accounts.filter((a:any)=>!account||a.id===account);
+   const stale=selected.some((a:any)=>!a.lastSyncedAt||Date.now()-Date.parse(a.lastSyncedAt)>15*60000||!a.since||a.since>since||a.until<until);
+   if(p.configured&&(force||syncIfStale&&stale)){const r=await fetch('/api/integrations/meta/ads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({since,until,account}),signal:controller.signal});const result=await r.json();if(!r.ok)throw Error(result.error||'同步失败');if(!current())return;const failures=result.results.filter((x:any)=>x.error);if(failures.length)setError(failures.map((x:any)=>x.name+'：'+x.error).join('；'));p=await load();if(current())setInfo(p);}
+  }catch(e){if(current())setError((e as Error).message);}finally{if(current())setBusy(false);}
+ }
+ async function sync(){return refresh(false,true);}
+ useEffect(()=>{setInfo(null);void refresh(true);return()=>activeRequest.current?.abort();},[since,until,account]);
  const rows:AdsRow[]=info?.rows||[];const totals=new Map<string,{spend:number;impressions:number;clicks:number;leads:number}>();for(const r of rows){const total=totals.get(r.currency)||{spend:0,impressions:0,clicks:0,leads:0};total.spend+=r.spend;total.impressions+=r.impressions;total.clicks+=r.clicks;total.leads+=r.leads;totals.set(r.currency,total);}
  function download(){const csv=[['Date','Account','Currency','Campaign ID','Campaign','Spend','Impressions','Clicks','Native form leads'],...rows.map(r=>[r.date,r.accountName,r.currency,r.campaignId,r.campaignName,r.spend,r.impressions,r.clicks,r.leads])].map(row=>row.map(v=>`"${(typeof v==='string'&&/^[=+@\-\t\r]/.test(v)?"'"+v:String(v)).replaceAll('"','""')}"`).join(',')).join('\r\n');const u=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download=`meta-ads-${since}-${until}.csv`;a.click();URL.revokeObjectURL(u);}
  return <section className="panel padded"><div className="panel-toolbar"><h2>Meta Ads Report</h2><span className="badge outline">{info?.configured?`${info.accounts.length} 个账户 · 只读连接`:'尚未配置广告账户'}</span></div>
