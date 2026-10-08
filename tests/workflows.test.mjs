@@ -3,6 +3,8 @@ const transpile=s=>ts.transpileModule(s,{compilerOptions:{module:ts.ModuleKind.E
 const url=s=>'data:text/javascript;base64,'+Buffer.from(s).toString('base64');
 const crmUrl=url(transpile(await readFile(new URL('../lib/crm.ts',import.meta.url),'utf8')));
 const crm=await import(crmUrl);
+const {csvCell}=await import(url(transpile(await readFile(new URL('../lib/csv.ts',import.meta.url),'utf8'))));
+test('CSV neutralizes formula values hidden behind whitespace while preserving quotes and numbers',()=>{for(const value of ['=1+1','\t=1+1','\r@SUM(1)','  +SUM(1)','\n-1+2'])assert.ok(csvCell(value).startsWith('"\''));assert.equal(csvCell(-20),'"-20"');assert.equal(csvCell('A "B"'),'"A ""B"""');});
 test('Preview intake switches to next eligible session at cutoff and stays within course',()=>{const state=crm.initialState();state.sessions=[{id:'past',courseId:'a',startsAt:'2026-10-08T12:00:00Z',intakeUntil:'2026-10-08T10:00:00Z',accepting:true},{id:'next',courseId:'a',startsAt:'2026-10-15T12:00:00Z',intakeUntil:'2026-10-15T12:00:00Z',accepting:true},{id:'other',courseId:'b',startsAt:'2026-10-09T12:00:00Z',intakeUntil:'2026-10-09T12:00:00Z',accepting:true}];assert.equal(crm.sessionFor(state,'a','2026-10-08T09:59:59Z').id,'past');assert.equal(crm.sessionFor(state,'a','2026-10-08T10:00:00Z').id,'next');assert.equal(crm.sessionFor(state,'a','2026-10-15T12:00:00Z'),null);});
 test('phone identity handles plus sign and separators',()=>{assert.equal(crm.phoneKey('+60 12-719 4133'),crm.phoneKey('60127194133'));});
 const batchCode=transpile(await readFile(new URL('../lib/meta-batch.ts',import.meta.url),'utf8'));const {processMetaBatch,retryCandidates}=await import(url(batchCode));
